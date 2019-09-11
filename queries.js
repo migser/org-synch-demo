@@ -26,9 +26,25 @@ function logEvent(org, object, replayId, operation, recordId) {
             console.console.error(`**logEvent for ${replayId} error: ${err}`);
             result = 0;
         });
+    console.log(`logid: ${result}`);
     return result;
 }
 
+function updateEvent(logid, status) {
+    db.tx(t => {
+            return t.batch(
+                t.none('UPDATE public.logtable SET status = $1 WHERE logid = $2', [status, logid])
+            );
+        })
+        .then(data => {
+            console.log(`updateEvent for ${logid} success`);
+        })
+        .catch(error => {
+            console.log('ERROR:', error);
+        });
+}
+
 module.exports = {
-    logEvent
+    logEvent,
+    updateEvent
 };
