@@ -32,9 +32,7 @@ function logEvent(org, object, replayId, operation, recordId) {
 
 function updateEvent(logid, status) {
     db.tx(t => {
-            return t.batch(
-                t.none('UPDATE public.logtable SET status = $1 WHERE logid = $2', [status, logid])
-            );
+            t.none('UPDATE public.logtable SET status = $1 WHERE logid = $2', [status, logid]);
         })
         .then(data => {
             console.log(`updateEvent for ${logid} success`);
