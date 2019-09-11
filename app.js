@@ -54,7 +54,10 @@ conn.login(username, password, (err, userInfo) => {
   console.dir('OK3!');
   conn.streaming.topic("/event/Escaneo__e").subscribe((message) => {
     console.dir(message);
+  });
 
+  conn.streaming.topic("/event/Escaneo__e").subscribe((message) => {
+    console.dir(`Evento 2 ${message}`);
   });
   return 'ok';
 });
