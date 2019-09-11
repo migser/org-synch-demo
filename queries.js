@@ -14,20 +14,19 @@ const db = pgp(connectionString);
 console.log('Conectado a la BBDD');
 // add query functions
 
-function logEvent(org, object, replayId, operation, recordId) {
+async function logEvent(org, object, replayId, operation, recordId) {
     let result;
-    db.one('insert into public.logtable(org, object, eventdate, replayid, operation, recordid, status) VALUES($1, $2, NOW(), $3, $4, $5, $6) RETURNING logid',
+    return db.one('insert into public.logtable(org, object, eventdate, replayid, operation, recordid, status) VALUES($1, $2, NOW(), $3, $4, $5, $6) RETURNING logid',
             [org, object, replayId, operation, recordId, 'RECEIVED'])
         .then((data) => {
             result = data.logid;
             console.log(`logEvent for ${replayId} success logid: ${result}`);
+            return Promise.resolve(result);
         })
         .catch((err) => {
             console.console.error(`**logEvent for ${replayId} error: ${err}`);
-            result = 0;
+            return Promise.reject(err);
         });
-    console.log(`logid: ${result}`);
-    return result;
 }
 
 function updateEvent(logid, status) {
