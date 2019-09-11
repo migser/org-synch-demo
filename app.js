@@ -10,6 +10,8 @@ const usersRouter = require('./routes/users');
 
 const app = express();
 
+console.dir('OK!');
+
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
@@ -55,5 +57,7 @@ conn.login(username, password, (err, userInfo) => {
   });
   return 'ok';
 });
+
+console.dir('OK2!');
 
 module.exports = app;
