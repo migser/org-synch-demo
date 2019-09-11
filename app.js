@@ -53,11 +53,11 @@ conn.login(username, password, (err, userInfo) => {
   }
   console.dir('OK3!');
   conn.streaming.topic("/event/Escaneo__e").subscribe((message) => {
-    console.dir(message);
+    console.dir(`Evento 1 ${JSON.stringify(message)}`);
   });
 
   conn.streaming.topic("/event/Escaneo__e").subscribe((message) => {
-    console.dir(`Evento 2 ${message}`);
+    console.dir(`Evento 2 ${JSON.stringify(message)}`);
   });
   return 'ok';
 });
