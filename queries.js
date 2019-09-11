@@ -15,13 +15,12 @@ console.log('Conectado a la BBDD');
 // add query functions
 
 async function logEvent(org, object, replayId, operation, recordId) {
-    let result;
+
     return db.one('insert into public.logtable(org, object, eventdate, replayid, operation, recordid, status) VALUES($1, $2, NOW(), $3, $4, $5, $6) RETURNING logid',
             [org, object, replayId, operation, recordId, 'RECEIVED'])
         .then((data) => {
-            result = data.logid;
-            console.log(`logEvent for ${replayId} success logid: ${result}`);
-            return Promise.resolve(result);
+            console.log(`logEvent for ${replayId} success logid: ${data.logid}`);
+            return Promise.resolve(data.logid);
         })
         .catch((err) => {
             console.console.error(`**logEvent for ${replayId} error: ${err}`);
@@ -33,11 +32,11 @@ async function updateEvent(logid, status) {
     db.tx(t => {
             t.none('UPDATE public.logtable SET status = $1 WHERE logid = $2', [status, logid]);
         })
-        .then(data => {
+        .then((data) => {
             console.log(`updateEvent for ${logid} success`);
             return Promise.resolve(logid);
         })
-        .catch(err => {
+        .catch((err) => {
             console.log('ERROR:', err);
             return Promise.reject(err);
         });
