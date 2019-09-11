@@ -19,8 +19,8 @@ function logEvent(org, object, replayId, operation, recordId) {
     db.one('insert into public.logtable(org, object, eventdate, replayid, operation, recordid, status) VALUES($1, $2, NOW(), $3, $4, $5, $6) RETURNING logid',
             [org, object, replayId, operation, recordId, 'RECEIVED'])
         .then((data) => {
-            console.log(`logEvent for ${replayId} success`);
             result = data.logid;
+            console.log(`logEvent for ${replayId} success logid: ${result}`);
         })
         .catch((err) => {
             console.console.error(`**logEvent for ${replayId} error: ${err}`);
