@@ -49,7 +49,7 @@ const conn = new jsforce.Connection({});
 
 conn.login(username, password, (err, userInfo) => {
   if (err) {
-    return console.error(err);
+    return console.log(err);
   }
   conn.streaming.topic("/event/Demo__e").subscribe((message) => {
     console.dir(message);
