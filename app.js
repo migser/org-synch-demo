@@ -52,7 +52,7 @@ conn.login(username, password, (err, userInfo) => {
     return console.log(err);
   }
   console.dir('OK3!');
-  conn.streaming.topic("/event/Demo__e").subscribe((message) => {
+  conn.streaming.topic("/event/Escaneo__e").subscribe((message) => {
     console.dir(message);
 
   });
