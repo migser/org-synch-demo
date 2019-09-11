@@ -29,15 +29,17 @@ async function logEvent(org, object, replayId, operation, recordId) {
         });
 }
 
-function updateEvent(logid, status) {
+async function updateEvent(logid, status) {
     db.tx(t => {
             t.none('UPDATE public.logtable SET status = $1 WHERE logid = $2', [status, logid]);
         })
         .then(data => {
             console.log(`updateEvent for ${logid} success`);
+            return Promise.resolve(logid);
         })
-        .catch(error => {
-            console.log('ERROR:', error);
+        .catch(err => {
+            console.log('ERROR:', err);
+            return Promise.reject(err);
         });
 }
 
