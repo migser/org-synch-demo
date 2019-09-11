@@ -23,7 +23,7 @@ async function logEvent(org, object, replayId, operation, recordId) {
             return Promise.resolve(data.logid);
         })
         .catch((err) => {
-            console.console.error(`**logEvent for ${replayId} error: ${err}`);
+            console.error(`**logEvent for ${replayId} error: ${err}`);
             return Promise.reject(err);
         });
 }
@@ -32,12 +32,12 @@ async function updateEvent(logid, status) {
     return db.tx(t => {
             t.none('UPDATE public.logtable SET status = $1 WHERE logid = $2', [status, logid]);
         })
-        .then((data) => {
+        .then((_data) => {
             console.log(`updateEvent for ${logid} success`);
             return Promise.resolve(logid);
         })
         .catch((err) => {
-            console.log('ERROR:', err);
+            console.error('ERROR:', err);
             return Promise.reject(err);
         });
 }
