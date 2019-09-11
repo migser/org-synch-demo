@@ -51,6 +51,7 @@ conn.login(username, password, (err, userInfo) => {
   if (err) {
     return console.log(err);
   }
+  console.dir('OK3!');
   conn.streaming.topic("/event/Demo__e").subscribe((message) => {
     console.dir(message);
 
