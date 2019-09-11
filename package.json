@@ -1,0 +1,25 @@
+{
+  "name": "org-synch-demo",
+  "version": "1.0.0",
+  "description": "demo for org synch...",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/migser/org-synch-demo.git"
+  },
+  "keywords": [
+    "demo"
+  ],
+  "author": "mserrano",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/migser/org-synch-demo/issues"
+  },
+  "homepage": "https://github.com/migser/org-synch-demo#readme",
+  "dependencies": {
+    "jsforce": "^1.9.2"
+  }
+}
