@@ -4,6 +4,7 @@ const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const jsforce = require('jsforce');
+const proc = require('./events');
 
 const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/users');
@@ -54,10 +55,12 @@ conn.login(username, password, (err, userInfo) => {
   console.dir('OK3!');
   conn.streaming.topic("/event/Escaneo__e").subscribe((message) => {
     console.dir(`Evento 1 ${JSON.stringify(message)}`);
+    proc.processEvent('orgA', message);
   });
 
   conn.streaming.topic("/event/Escaneo__e").subscribe((message) => {
     console.dir(`Evento 2 ${JSON.stringify(message)}`);
+    proc.processEvent('orgB', message);
   });
   return 'ok';
 });
