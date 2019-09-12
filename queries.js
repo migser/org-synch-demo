@@ -78,7 +78,7 @@ async function updateRecord(origin, destination, object, recordId) {
                 SET type = original.rtype , rating = original.rating , name = original.name , isdeleted = original.isdeleted , industry = original.industry , external_id__c = original.external_id__c , description = original.description , billingstreet = original.billingstreet , billingstate = original.billingstate , billingpostalcode = original.billingpostalcode , billingcountry = original.billingcountry , billingcity = original.billingcity , annualrevenue = original.annualrevenue , accountnumber = original.accountnumber
                 FROM (select type,rating,name,isdeleted,industry,external_id__c,description,billingstreet,billingstate,billingpostalcode,
                 billingcountry,billingcity,annualrevenue,accountnumber from ${origin}.Account where external_id__c=$1) AS original 
-                WHERE external_id__c=$1`,
+                WHERE ${destination}.Account.external_id__c=$1`,
                 [recordId])
             .then(() => {
                 return Promise.resolve();
@@ -94,7 +94,7 @@ async function updateRecord(origin, destination, object, recordId) {
             (select type, systemmodstamp, stagename, sfid, probability, nextstep, name, iswon, isdeleted, id, external_id__c, createddate, closedate, amount, accountid, account__external_id__c 
                 from ${origin}.Opportunity 
                 where external_id__c=$1) AS original 
-            WHERE external_id__c=$1`,
+            WHERE ${destination}.Opportunity.external_id__c=$1`,
             [recordId])
         .then(() => {
             return Promise.resolve();
