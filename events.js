@@ -13,6 +13,7 @@ function processEvent(schema, event) {
             return db.updateEvent(logid, 'PROCESSED');
         })
         .then((logid) => {
+            console.log(`Synch: ${logid} ${schema} ${event.payload.operation__c} ${event.payload.object__c} ${event.payload.recordId__c}`);
             return db.syncRecord(logid, schema, ((schema.equals('orga')) ? 'orgb' : 'orga'), event.payload.operation__c, event.payload.object__c, event.payload.recordId__c);
         })
         .then((logid) => {

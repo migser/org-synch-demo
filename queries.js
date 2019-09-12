@@ -53,7 +53,6 @@ async function insertRecord(origin, destination, object, recordId) {
                 billingcountry,billingcity,annualrevenue,accountnumber,share__c select type,rating,name,isdeleted,industry,external_id__c,description,billingstreet,billingstate,billingpostalcode,
                 billingcountry,billingcity,annualrevenue,accountnumber,'Imported' from ${origin}.Account where external_id__c = ${recordId} RETURNING id`);
                 console.log(`Insertado con éxito, ID: ${data.id}`);
-                console.log(`Insertado con éxito, ID: ${data.id}`);
                 return Promise.resolve();
             })
             .catch((err) => {
