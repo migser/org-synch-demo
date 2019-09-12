@@ -100,6 +100,7 @@ async function updateRecord(origin, destination, object, recordId) {
 
 async function syncRecord(logid, origin, destination, operation, object, recordId) {
     // 1 - Llamar a insert o update
+    console.log(`Sincronizando registro: ${recordId} Operacion: ${operation} Origen: ${origin} Destino: ${destination}`);
     if (operation === 'INSERT') {
         return insertRecord(origin, destination, object, recordId)
             .then(() => {
