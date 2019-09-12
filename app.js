@@ -44,23 +44,35 @@ app.use((err, req, res, next) => {
   res.render('error');
 });
 
-const username = 'admin@miguel-sdo.demo';
+const username = 'admin@miguel.orga.demo';
 const password = 'sfdc1234';
 const conn = new jsforce.Connection({});
+
+const username2 = 'admin@miguel.orgb.demo';
+const password2 = 'sfdc1234';
+const conn2 = new jsforce.Connection({});
 
 conn.login(username, password, (err, userInfo) => {
   if (err) {
     return console.log(err);
   }
-  console.dir('OK3!');
-  conn.streaming.topic("/event/Escaneo__e").subscribe((message) => {
+  console.dir(`Conectado con orgA`);
+  conn.streaming.topic("/event/Synch__e").subscribe((message) => {
     console.dir(`Evento 1 ${JSON.stringify(message)}`);
-    proc.processEvent('orgA', message);
+    proc.processEvent('orga', message);
   });
+  return 'ok';
+});
 
-  conn.streaming.topic("/event/Escaneo__e").subscribe((message) => {
+
+conn2.login(username2, password2, (err, userInfo) => {
+  if (err) {
+    return console.log(err);
+  }
+  console.dir(`Conectado con orgB`);
+  conn2.streaming.topic("/event/Synch__e").subscribe((message) => {
     console.dir(`Evento 2 ${JSON.stringify(message)}`);
-    proc.processEvent('orgB', message);
+    proc.processEvent('orgb', message);
   });
   return 'ok';
 });

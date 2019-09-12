@@ -42,7 +42,83 @@ async function updateEvent(logid, status) {
         });
 }
 
+async function insertRecord(origin, destination, object, recordId) {
+    if (object === 'Account') {
+        return db.none('insert into $1.Account(type,rating,name,isdeleted,industry,external_id__c,description,billingstreet,billingstate,billingpostalcode,' +
+                'billingcountry,billingcity,annualrevenue,accountnumber,share__c select type,rating,name,isdeleted,industry,external_id__c,description,billingstreet,billingstate,billingpostalcode,' +
+                'billingcountry,billingcity,annualrevenue,accountnumber,$4 from $2.Account where external_id__c = $3 ',
+                [destination, origin, recordId, 'Imported'])
+            .then(() => {
+                return Promise.resolve();
+            })
+            .catch((err) => {
+                return Promise.reject(err);
+            });
+    }
+
+    return db.none('insert into $1.Opportunity(type, systemmodstamp, stagename, sfid, probability, nextstep, name, iswon, isdeleted, id, external_id__c, createddate, closedate, amount, accountid, account__external_id__c) ' +
+            'select type, systemmodstamp, stagename, sfid, probability, nextstep, name, iswon, isdeleted, id, external_id__c, createddate, closedate, amount, accountid, account__external_id__c from $2.Opportunity where external_id__c=$3',
+            [destination, origin, recordId])
+        .then(() => {
+            return Promise.resolve();
+        })
+        .catch((err) => {
+            return Promise.reject(err);
+        });
+}
+
+async function updateRecord(origin, destination, object, recordId) {
+    if (object === 'Account') {
+        return db.none('UPDATE $1.Account SET type = original.rtype , rating = original.rating , name = original.name , isdeleted = original.isdeleted , industry = original.industry , external_id__c = original.external_id__c , description = original.description , billingstreet = original.billingstreet , billingstate = original.billingstate , billingpostalcode = original.billingpostalcode , billingcountry = original.billingcountry , billingcity = original.billingcity , annualrevenue = original.annualrevenue , accountnumber = original.accountnumber' +
+                'FROM (select type,rating,name,isdeleted,industry,external_id__c,description,billingstreet,billingstate,billingpostalcode,' +
+                'billingcountry,billingcity,annualrevenue,accountnumber from $2.Account where external_id__c=$3) AS original WHERE external_id__c=$3',
+                [destination, origin, recordId])
+            .then(() => {
+                return Promise.resolve();
+            })
+            .catch((err) => {
+                return Promise.reject(err);
+            });
+    }
+
+    return db.none('UPDATE $1.Opportunity SET type = original.type, systemmodstamp = original.systemmodstamp, stagename = original.stagename, sfid = original.sfid, probability = original.probability, nextstep = original.nextstep, name = original.name, iswon = original.iswon, isdeleted = original.isdeleted, id = original.id, external_id__c = original.external_id__c, createddate = original.createddate, closedate = original.closedate, amount = original.amount, accountid = original.accountid, account__external_id__c = original.account__external_id__c FROM ' +
+            '(select type, systemmodstamp, stagename, sfid, probability, nextstep, name, iswon, isdeleted, id, external_id__c, createddate, closedate, amount, accountid, account__external_id__c from $2.Account where external_id__c=$3) AS original WHERE external_id__c=$3',
+            [destination, origin, recordId])
+        .then(() => {
+            return Promise.resolve();
+        })
+        .catch((err) => {
+            return Promise.reject(err);
+        });
+}
+
+async function syncRecord(logid, origin, destination, operation, object, recordId) {
+    // 1 - Llamar a insert o update
+    if (operation === 'INSERT') {
+        return insertRecord(origin, destination, object, recordId)
+            .then(() => {
+                console.log(`New record in ${object} from ${origin} to ${destination} ID: ${recordId}`);
+                return Promise.resolve(logid);
+            })
+            .catch((err) => {
+                console.error('ERROR:', err);
+                return Promise.reject(err);
+            });
+    }
+    return updateRecord(origin, destination, object, recordId)
+        .then(() => {
+            console.log(`Updated record in ${object} from ${origin} to ${destination} ID: ${recordId}`);
+            return Promise.resolve(logid);
+        })
+        .catch((err) => {
+            console.error('ERROR:', err);
+            return Promise.reject(err);
+        });
+}
+
+
 module.exports = {
     logEvent,
-    updateEvent
+    updateEvent,
+    syncRecord
 };
