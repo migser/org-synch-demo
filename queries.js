@@ -46,9 +46,11 @@ async function insertRecord(origin, destination, object, recordId) {
     console.log(`Imsertando registro en ${destination}`);
     if (object === 'Account') {
 
-        return db.one(`insert into ${destination}.Account(type,rating,name,isdeleted,industry,external_id__c,description,billingstreet,billingstate,billingpostalcode,` +
-                `billingcountry,billingcity,annualrevenue,accountnumber,share__c select type,rating,name,isdeleted,industry,external_id__c,description,billingstreet,billingstate,billingpostalcode,` +
-                `billingcountry,billingcity,annualrevenue,accountnumber,$2 from ${origin}.Account where external_id__c = $1 RETURNING id`,
+        return db.one(`insert into ${destination}.Account 
+                    (type,rating,name,isdeleted,industry,external_id__c,description,billingstreet,billingstate,billingpostalcode,
+                billingcountry,billingcity,annualrevenue,accountnumber,share__c) 
+                select type,rating,name,isdeleted,industry,external_id__c,description,billingstreet,billingstate,billingpostalcode,
+                billingcountry,billingcity,annualrevenue,accountnumber,$2 from ${origin}.Account where external_id__c = $1 RETURNING id`,
                 [recordId, 'Imported'])
             .then((data) => {
                 console.log(`Query: insert into ${destination}.Account(type,rating,name,isdeleted,industry,external_id__c,description,billingstreet,billingstate,billingpostalcode,
@@ -62,9 +64,10 @@ async function insertRecord(origin, destination, object, recordId) {
             });
     }
 
-    return db.none('insert into $1.Opportunity(type, systemmodstamp, stagename, sfid, probability, nextstep, name, iswon, isdeleted, id, external_id__c, createddate, closedate, amount, accountid, account__external_id__c) ' +
-            'select type, systemmodstamp, stagename, sfid, probability, nextstep, name, iswon, isdeleted, id, external_id__c, createddate, closedate, amount, accountid, account__external_id__c from $2.Opportunity where external_id__c=$3',
-            [destination, origin, recordId])
+    return db.none(`insert into ${destination}.Opportunity (type, systemmodstamp, stagename, sfid, probability, nextstep, name, iswon, isdeleted, id, external_id__c, createddate, closedate, amount, accountid, account__external_id__c) 
+            select type, systemmodstamp, stagename, sfid, probability, nextstep, name, iswon, isdeleted, id, external_id__c, createddate, closedate, amount, accountid, account__external_id__c 
+            from ${origin}.Opportunity where external_id__c=$1`,
+            [recordId])
         .then(() => {
             return Promise.resolve();
         })
