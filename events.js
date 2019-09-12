@@ -6,7 +6,7 @@ function processEvent(schema, event) {
     // 2- Disparar evento ? 
     // 3- actualizar audit
     // (org, object, replayId, operation, recordId)
-
+    db.syncRecord(null, schema, ((schema.equals('orga')) ? 'orgb' : 'orga'), event.payload.operation__c, event.payload.object__c, event.payload.recordId__c);
     db.logEvent(schema, event.payload.object__c, event.event.replayId, event.payload.operation__c, event.payload.recordId__c)
         .then((logid) => {
             console.log(`LOG ID: ${logid}`);
