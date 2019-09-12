@@ -43,8 +43,10 @@ async function updateEvent(logid, status) {
 }
 
 async function insertRecord(origin, destination, object, recordId) {
+    console.log(`Imsertando registro en ${destination}`);
     if (object === 'Account') {
-        return db.none('insert into $1.Account(type,rating,name,isdeleted,industry,external_id__c,description,billingstreet,billingstate,billingpostalcode,' +
+
+        return db.one('insert into $1.Account(type,rating,name,isdeleted,industry,external_id__c,description,billingstreet,billingstate,billingpostalcode,' +
                 'billingcountry,billingcity,annualrevenue,accountnumber,share__c select type,rating,name,isdeleted,industry,external_id__c,description,billingstreet,billingstate,billingpostalcode,' +
                 'billingcountry,billingcity,annualrevenue,accountnumber,$4 from $2.Account where external_id__c = $3 RETURNING id',
                 [destination, origin, recordId, 'Imported'])
