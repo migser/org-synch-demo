@@ -53,10 +53,6 @@ async function insertRecord(origin, destination, object, recordId) {
                 billingcountry,billingcity,annualrevenue,accountnumber,$2 from ${origin}.Account where external_id__c = $1 RETURNING id`,
                 [recordId, 'Imported'])
             .then((data) => {
-                console.log(`Query: insert into ${destination}.Account(type,rating,name,isdeleted,industry,external_id__c,description,billingstreet,billingstate,billingpostalcode,
-                billingcountry,billingcity,annualrevenue,accountnumber,share__c select type,rating,name,isdeleted,industry,external_id__c,description,billingstreet,billingstate,billingpostalcode,
-                billingcountry,billingcity,annualrevenue,accountnumber,'Imported' from ${origin}.Account where external_id__c = ${recordId} RETURNING id`);
-                console.log(`Insertado con éxito, ID: ${data.id}`);
                 return Promise.resolve();
             })
             .catch((err) => {
@@ -78,10 +74,12 @@ async function insertRecord(origin, destination, object, recordId) {
 
 async function updateRecord(origin, destination, object, recordId) {
     if (object === 'Account') {
-        return db.none('UPDATE $1.Account SET type = original.rtype , rating = original.rating , name = original.name , isdeleted = original.isdeleted , industry = original.industry , external_id__c = original.external_id__c , description = original.description , billingstreet = original.billingstreet , billingstate = original.billingstate , billingpostalcode = original.billingpostalcode , billingcountry = original.billingcountry , billingcity = original.billingcity , annualrevenue = original.annualrevenue , accountnumber = original.accountnumber' +
-                'FROM (select type,rating,name,isdeleted,industry,external_id__c,description,billingstreet,billingstate,billingpostalcode,' +
-                'billingcountry,billingcity,annualrevenue,accountnumber from $2.Account where external_id__c=$3) AS original WHERE external_id__c=$3',
-                [destination, origin, recordId])
+        return db.none(`UPDATE ${destination}.Account 
+                SET type = original.rtype , rating = original.rating , name = original.name , isdeleted = original.isdeleted , industry = original.industry , external_id__c = original.external_id__c , description = original.description , billingstreet = original.billingstreet , billingstate = original.billingstate , billingpostalcode = original.billingpostalcode , billingcountry = original.billingcountry , billingcity = original.billingcity , annualrevenue = original.annualrevenue , accountnumber = original.accountnumber
+                FROM (select type,rating,name,isdeleted,industry,external_id__c,description,billingstreet,billingstate,billingpostalcode,
+                billingcountry,billingcity,annualrevenue,accountnumber from ${origin}.Account where external_id__c=$1) AS original 
+                WHERE external_id__c=$1`,
+                [recordId])
             .then(() => {
                 return Promise.resolve();
             })
@@ -90,9 +88,14 @@ async function updateRecord(origin, destination, object, recordId) {
             });
     }
 
-    return db.none('UPDATE $1.Opportunity SET type = original.type, systemmodstamp = original.systemmodstamp, stagename = original.stagename, sfid = original.sfid, probability = original.probability, nextstep = original.nextstep, name = original.name, iswon = original.iswon, isdeleted = original.isdeleted, id = original.id, external_id__c = original.external_id__c, createddate = original.createddate, closedate = original.closedate, amount = original.amount, accountid = original.accountid, account__external_id__c = original.account__external_id__c FROM ' +
-            '(select type, systemmodstamp, stagename, sfid, probability, nextstep, name, iswon, isdeleted, id, external_id__c, createddate, closedate, amount, accountid, account__external_id__c from $2.Account where external_id__c=$3) AS original WHERE external_id__c=$3',
-            [destination, origin, recordId])
+    return db.none(`UPDATE ${destination}.Opportunity 
+            SET type = original.type, systemmodstamp = original.systemmodstamp, stagename = original.stagename, sfid = original.sfid, probability = original.probability, nextstep = original.nextstep, name = original.name, iswon = original.iswon, isdeleted = original.isdeleted, id = original.id, external_id__c = original.external_id__c, createddate = original.createddate, closedate = original.closedate, amount = original.amount, accountid = original.accountid, account__external_id__c = original.account__external_id__c 
+            FROM 
+            (select type, systemmodstamp, stagename, sfid, probability, nextstep, name, iswon, isdeleted, id, external_id__c, createddate, closedate, amount, accountid, account__external_id__c 
+                from ${origin}.Opportunity 
+                where external_id__c=$1) AS original 
+            WHERE external_id__c=$1`,
+            [recordId])
         .then(() => {
             return Promise.resolve();
         })
@@ -102,8 +105,6 @@ async function updateRecord(origin, destination, object, recordId) {
 }
 
 async function syncRecord(logid, origin, destination, operation, object, recordId) {
-    // 1 - Llamar a insert o update
-    console.log(`Sincronizando registro: ${recordId} Operacion: ${operation} Origen: ${origin} Destino: ${destination}`);
     if (operation === 'INSERT') {
         return insertRecord(origin, destination, object, recordId)
             .then(() => {
