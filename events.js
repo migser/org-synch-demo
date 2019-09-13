@@ -11,7 +11,11 @@ function processEvent(schema, event) {
             return db.updateEvent(logid, 'PROCESSED');
         })
         .then((logid) => {
-            return db.syncRecord(logid, schema, ((schema === 'orga') ? 'orgb' : 'orga'), event.payload.operation__c, event.payload.object__c, event.payload.recordId__c);
+            console.log(`Waiting for the record ${event.payload.recordId__c}...`)
+            setTimeout(() => {
+                return db.syncRecord(logid, schema, ((schema === 'orga') ? 'orgb' : 'orga'), event.payload.operation__c, event.payload.object__c, event.payload.recordId__c);
+            }, 5000);
+
         })
         .then((logid) => {
             return db.updateRecordStatus(logid, schema, event.payload.object__c, event.payload.recordId__c, 'Shared');

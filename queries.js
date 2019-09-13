@@ -113,7 +113,7 @@ async function updateRecord(origin, destination, object, recordId) {
 
 async function updateRecordStatus(logid, schema, object, recordId, status) {
     return db.none(`UPDATE ${schema}.${object} 
-                SET share__c = $1 WHERE ${schema}.${object}.external_id__c=$2`,
+                SET share__c = $1 WHERE external_id__c=$2`,
             [status, recordId])
         .then(() => {
             return Promise.resolve(logid);

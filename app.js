@@ -11,8 +11,6 @@ const usersRouter = require('./routes/users');
 
 const app = express();
 
-console.dir('OK!');
-
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
@@ -76,7 +74,5 @@ conn2.login(username2, password2, (err, userInfo) => {
   });
   return 'ok';
 });
-
-console.dir('OK2!');
 
 module.exports = app;
