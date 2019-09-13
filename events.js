@@ -14,7 +14,7 @@ function processEvent(schema, event) {
             return db.syncRecord(logid, schema, ((schema === 'orga') ? 'orgb' : 'orga'), event.payload.operation__c, event.payload.object__c, event.payload.recordId__c);
         })
         .then((logid) => {
-            console.log('Update original row --> Shared')
+            return db.updateRecordStatus(logid, schema, event.payload.object__c, event.payload.recordId__c, 'Shared');
         })
         .then((logid) => {
             return db.updateEvent(logid, 'DONE');

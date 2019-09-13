@@ -111,6 +111,18 @@ async function updateRecord(origin, destination, object, recordId) {
         });
 }
 
+async function updateRecordStatus(logid, schema, object, recordId, status) {
+    return db.none(`UPDATE ${schema}.${object} 
+                SET share__c = $1 WHERE ${schema}.${object}.external_id__c=$2`,
+            [status, recordId])
+        .then(() => {
+            return Promise.resolve(logid);
+        })
+        .catch((err) => {
+            return Promise.reject(err);
+        });
+}
+
 async function syncRecord(logid, origin, destination, operation, object, recordId) {
     if (operation === 'INSERT') {
         return insertRecord(origin, destination, object, recordId)
@@ -138,5 +150,6 @@ async function syncRecord(logid, origin, destination, operation, object, recordI
 module.exports = {
     logEvent,
     updateEvent,
-    syncRecord
+    syncRecord,
+    updateRecordStatus
 };
