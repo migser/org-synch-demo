@@ -1,5 +1,6 @@
 const db = require('./queries');
 
+
 function processEvent(schema, event) {
     // 0- Logar y auditar
     // 1- Llamar a copiar record
@@ -11,11 +12,7 @@ function processEvent(schema, event) {
             return db.updateEvent(logid, 'PROCESSED');
         })
         .then((logid) => {
-            console.log(`Waiting for the record ${event.payload.recordId__c}...`)
-            setTimeout(() => {
-                return db.syncRecord(logid, schema, ((schema === 'orga') ? 'orgb' : 'orga'), event.payload.operation__c, event.payload.object__c, event.payload.recordId__c);
-            }, 5000);
-
+            return db.syncRecord(logid, schema, ((schema === 'orga') ? 'orgb' : 'orga'), event.payload.operation__c, event.payload.object__c, event.payload.recordId__c);
         })
         .then((logid) => {
             return db.updateRecordStatus(logid, schema, event.payload.object__c, event.payload.recordId__c, 'Shared');

@@ -13,6 +13,9 @@ pgp.pg.defaults.ssl = true;
 const db = pgp(connectionString);
 console.log('Conectado a la BBDD');
 // add query functions
+async function timeout(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
 
 async function logEvent(org, object, replayId, operation, recordId) {
 
@@ -124,6 +127,7 @@ async function updateRecordStatus(logid, schema, object, recordId, status) {
 }
 
 async function syncRecord(logid, origin, destination, operation, object, recordId) {
+    await timeout(5000);
     if (operation === 'INSERT') {
         return insertRecord(origin, destination, object, recordId)
             .then(() => {
